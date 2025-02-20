@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Pengingat</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #ffcc00, #ff6699);
+            color: #333;
+        }
+        header {
+            background: #ff6600;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            background: #ff9933;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        main {
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .feature {
+            background: #ffcc00;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #ff6600;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Agenda Pengingat - Website Sekolah</h1>
+        <nav>
+            <ul>
+                <li><a href="#" data-page="beranda">Beranda</a></li>
+                <li><a href="#" data-page="tambah-agenda">Tambah Agenda</a></li>
+                <li><a href="#" data-page="daftar-agenda">Daftar Agenda</a></li>
+                <li><a href="#" data-page="login">Login</a></li>
+                <li><a href="#" data-page="register">Daftar</a></li>
+                <li><a href="#" data-page="logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main id="content">
+        <h2>Selamat Datang di Agenda Pengingat</h2>
+        <p>Silakan login atau daftar untuk mengakses fitur.</p>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Agenda Pengingat. Hantu Durian Runtuh XIIA</p>
+    </footer>
+    
+    <script>
+        let loggedIn = false;
+        let agendaList = [];
+
+        const pages = {
+            "beranda": `<h2>Selamat Datang di Agenda Pengingat</h2>
+                         <p>Kelola dan atur agenda harian Anda dengan mudah.</p>
+                         <div class='feature'><h3>📅 Jadwal Sekolah</h3><p>Atur dan lihat jadwal sekolah harianmu.</p></div>
+                         <div class='feature'><h3>🔔 Notifikasi Pengingat</h3><p>Dapatkan pengingat otomatis untuk setiap tugas atau kegiatan.</p></div>` ,
+            "tambah-agenda": `<h2>Tambah Agenda</h2>
+                               <form id='agenda-form'>
+                                   <label>Judul:</label>
+                                   <input type='text' id='title' required>
+                                   <label>Tanggal:</label>
+                                   <input type='date' id='date' required>
+                                   <label>Waktu:</label>
+                                   <input type='time' id='time' required>
+                                   <button type='submit'>Simpan</button>
+                               </form>` ,
+            "daftar-agenda": `<h2>Daftar Agenda</h2>
+                              <p>Berikut adalah daftar agenda yang telah Anda tambahkan.</p>
+                              <ul id='event-list'>
+                              </ul>` ,
+            "login": `<h2>Login</h2>
+                      <form id="login-form">
+                          <label>Username:</label>
+                          <input type='text' id='login-username' required>
+                          <label>Password:</label>
+                          <input type='password' id='login-password' required>
+                          <button type='submit'>Login</button>
+                      </form>` ,
+            "register": `<h2>Daftar Akun</h2>
+                         <form>
+                             <label>Username:</label>
+                             <input type='text' id='reg-username' required>
+                             <label>Password:</label>
+                             <input type='password' id='reg-password' required>
+                             <button type='submit'>Daftar</button>
+                         </form>` ,
+            "logout": `<h2>Anda telah keluar</h2>
+                        <p>Silakan login kembali untuk mengakses fitur.</p>`
+        };
+        
+        document.querySelectorAll("nav ul li a").forEach(link => {
+            link.addEventListener("click", function(event) {
+                event.preventDefault();
+                const page = this.getAttribute("data-page");
+                if (page !== "login" && page !== "register" && page !== "logout" && !loggedIn) {
+                    alert("Silakan login atau daftar untuk mengakses fitur ini.");
+                    return;
+                }
+                document.getElementById("content").innerHTML = pages[page];
+                
+                if (page === "login") {
+                    document.getElementById("login-form").addEventListener("submit", function(e) {
+                        e.preventDefault();
+                        loggedIn = true;
+                        alert("Login berhasil!");
+                        document.getElementById("content").innerHTML = pages["beranda"];
+                    });
+                }
+                
+                if (page === "logout") {
+                    loggedIn = false;
+                    document.getElementById("content").innerHTML = pages["logout"];
+                }
+                
+                if (page === "tambah-agenda") {
+                    document.getElementById("agenda-form").addEventListener("submit", function(e) {
+                        e.preventDefault();
+                        const title = document.getElementById("title").value;
+                        const date = document.getElementById("date").value;
+                        const time = document.getElementById("time").value;
+                        agendaList.push(`${title} - ${date} ${time}`);
+                        alert("Agenda berhasil ditambahkan!");
+                        document.getElementById("content").innerHTML = pages["daftar-agenda"];
+                        displayAgenda();
+                    });
+                }
+                
+                if (page === "daftar-agenda") {
+                    displayAgenda();
+                }
+            });
+        });
+        
+        function displayAgenda() {
+            const eventList = document.getElementById("event-list");
+            eventList.innerHTML = agendaList.length ? agendaList.map(item => `<li>${item}</li>`).join('') : "<li>Tidak ada agenda</li>";
+        }
+    </script>
+</body>
+</html>
